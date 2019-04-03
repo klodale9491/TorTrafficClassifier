@@ -1,23 +1,8 @@
-from scipy.io import arff
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
-
-
-def loadDataset(filename):
-    # caricamento dei dati da dataset
-    arffData = arff.loadarff(filename)
-    cleanData = arffData[0].__array__()
-    # manipolo il dataset convertendolo in liste
-    cleanDataList = [list(row) for row in cleanData]
-
-    # la classi le voglio in utf-8 e non binarie
-    for row in cleanDataList:
-        row[-1] = row[-1].decode('utf-8')
-
-    dataset = [cleanDataList[i][0:22] for i in range(len(cleanDataList))]
-    classes = [cleanDataList[i][23] for i in range(len(cleanDataList))]
-    return dataset, classes
+from sklearn.metrics import classification_report
+from util import loadDataset
 
 
 # X, Y = loadDataset('datasets/scenario-a/SelectedFeatures-15s-TOR-NonTOR.arff')
@@ -42,4 +27,8 @@ clf.fit(X_train, Y_train)
 # predizione
 Y_pred = clf.predict(X_test)
 conf_mat = confusion_matrix(Y_test, Y_pred)
+class_rep = classification_report(Y_test, Y_pred)
+
+# risultati
 print(conf_mat)
+print(class_rep)
