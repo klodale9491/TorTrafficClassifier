@@ -2,7 +2,7 @@ from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
-from util import loadDataset
+from util import load_dataset_time_based_a
 
 
 # X, Y = loadDataset('datasets/scenario-a/SelectedFeatures-15s-TOR-NonTOR.arff')
@@ -17,10 +17,10 @@ from util import loadDataset
 # X, Y = loadDataset('datasets/scenario-a/TimeBasedFeatures-60s-TOR-NonTOR-85.arff')
 # X, Y = loadDataset('datasets/scenario-a/TimeBasedFeatures-120s-TOR-NonTOR.arff')
 # X, Y = loadDataset('datasets/scenario-a/TimeBasedFeatures-120s-TOR-NonTOR-15.arff')
-X, Y = loadDataset('datasets/scenario-a/TimeBasedFeatures-120s-TOR-NonTOR-85.arff')
+X, Y = load_dataset_time_based_a('datasets/scenario-a/TimeBasedFeatures-120s-TOR-NonTOR-85.arff')
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.90, random_state=42)
 
-# allenamento della SVM
+# allenamentX, Y = loadDataset2('datasets/scenario-b/merged_5s.csv', -1)o della SVM
 clf = svm.SVC(gamma='scale')
 clf.fit(X_train, Y_train)
 
