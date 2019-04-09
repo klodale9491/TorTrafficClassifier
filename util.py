@@ -1,6 +1,7 @@
 from scipy.io import arff
-import numpy as np
+from sklearn import preprocessing
 import pandas as pd
+import numpy as np
 
 
 def load_dataset_time_based_a(filename):
@@ -51,11 +52,24 @@ def load_dataset_time_based_b(filename):
     return dataset, classes
 
 
+
+def load_dataset_csv_a(filename):
+    dataframe = pd.read_csv(filename, ',')
+    columns = dataframe.columns[5:-1]
+    data = np.asarray(dataframe[columns])
+    classes = np.asarray(dataframe['label'])
+    # codifica delle label da stringhe a interi
+    label_encoder = preprocessing.LabelEncoder()
+    label_encoder.fit(['TOR', 'nonTOR'])
+    encoded_classes = label_encoder.transform(classes)
+    return data, encoded_classes
+
+
 '''
 Permette il caricamento del dataset csv filtrato 
 in base al protocollo che ci interessa : Email, FTP, P2P etc ....
 '''
-def loadDatasetCsv(filename, protocol):
+def load_dataset_csv_b(filename, protocol):
     dataframe = pd.read_csv(filename, ',')
     columns = dataframe.columns[5:-1]
     data = np.asarray(dataframe[columns])
