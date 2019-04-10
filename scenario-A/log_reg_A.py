@@ -1,14 +1,21 @@
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
-from util import load_dataset_csv_a
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
+from util import load_dataset_time_based_a
+from util import load_dataset_csv_a
+from util import oversample_dataset_a
 
 
 # caricamento datasets
-X, Y = load_dataset_csv_a('datasets/scenario-a/merged_5s_clean.csv')
+X, Y = load_dataset_csv_a('../datasets/scenario-a/merged_5s_clean.csv')
+# X, Y = load_dataset_time_based_a('../datasets/scenario-a/TimeBasedFeatures-30s-TOR-NonTOR.arff')
+
+# oversampling: bilancio il dataset in favore della classe con meno samples ..
+X, Y = oversample_dataset_a(X, Y)
+
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.10, random_state=42)
 
 # regressione logistica, mi da la probabilità di ognuna delle due classi

@@ -3,14 +3,13 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_val_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from util import load_dataset_csv_a
 
 
 # caricamento datasets
-X, Y = load_dataset_csv_a('datasets/scenario-a/merged_5s_clean.csv')
+X, Y = load_dataset_csv_a('../datasets/scenario-a/merged_5s_clean.csv')
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.10, random_state=42)
 Y_train_cat = to_categorical(Y_train)
 Y_test_cat = to_categorical(Y_test)

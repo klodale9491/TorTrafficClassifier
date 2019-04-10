@@ -1,5 +1,6 @@
 from scipy.io import arff
 from sklearn import preprocessing
+from sklearn.utils import resample
 import pandas as pd
 import numpy as np
 
@@ -52,7 +53,6 @@ def load_dataset_time_based_b(filename):
     return dataset, classes
 
 
-
 def load_dataset_csv_a(filename):
     dataframe = pd.read_csv(filename, ',')
     columns = dataframe.columns[5:-1]
@@ -65,10 +65,6 @@ def load_dataset_csv_a(filename):
     return data, encoded_classes
 
 
-'''
-Permette il caricamento del dataset csv filtrato 
-in base al protocollo che ci interessa : Email, FTP, P2P etc ....
-'''
 def load_dataset_csv_b(filename, protocol):
     dataframe = pd.read_csv(filename, ',')
     columns = dataframe.columns[5:-1]
@@ -97,3 +93,16 @@ def load_dataset_csv_b(filename, protocol):
         elif (prot == 'VOIP'):
             protocol_classes_num.append(7)
     return protocol_data, protocol_classes_num
+
+
+def oversample_dataset_a(x, y):
+    ds = np.concatenate((x, np.array([y]).T), axis=1)
+    ds_majority = ds[np.where(y == 0)]
+    ds_minority = ds[np.where(y == 1)]
+    ds_minority_upsampled = resample(ds_minority,
+                                     replace=True,  # sample with replacement
+                                     n_samples=len(ds_majority),  # to match majority class
+                                     random_state=123)  # reproducible results
+    ds_upsampled = np.concatenate((ds_majority, ds_minority_upsampled), axis=0)
+    x_up, y_up = ds_upsampled[:, 0:22], ds_upsampled[:, 22]
+    return x_up, y_up
