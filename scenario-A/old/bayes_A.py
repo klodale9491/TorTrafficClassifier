@@ -7,15 +7,13 @@ from sklearn.naive_bayes import GaussianNB
 from util import load_dataset_time_based_a
 from util import load_dataset_csv_a
 from util import oversample_dataset_a
+import numpy as np
 
 # caricamento datasets
-X, Y = load_dataset_csv_a('../datasets/scenario-a/merged_5s_clean.csv')
-# X, Y = load_dataset_time_based_a('../datasets/scenario-a/TimeBasedFeatures-30s-TOR-NonTOR.arff')
-
-# oversampling: bilancio il dataset in favore della classe con meno samples ..
-X, Y = oversample_dataset_a(X, Y)
-
+# X, Y = load_dataset_csv_a('../datasets/scenario-a/merged_5s_clean.csv')
+X, Y = load_dataset_time_based_a('../datasets/scenario-a/TimeBasedFeatures-30s-TOR-NonTOR.arff')
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.10, random_state=0)
+X_train, Y_train = oversample_dataset_a(X_train, Y_train)
 
 # classificatore bayes naive con distribuzione gaussiana delle features, mi da la probabilità di ognuna delle due classi
 gnb = GaussianNB()
@@ -37,7 +35,13 @@ print(accuracy)
 print(class_rep)
 
 # 10 fold cross-validation
-scores = cross_val_score(gnb, X, Y, cv=10, scoring='f1_macro')
+accuracy_scores = cross_val_score(gnb, X, Y, cv=10, scoring='accuracy')
+recall_scores = cross_val_score(gnb, X, Y, cv=10, scoring='recall')
+precision_scores = cross_val_score(gnb, X, Y, cv=10, scoring='precision')
+f1_scores = cross_val_score(gnb, X, Y, cv=10, scoring='f1')
+
 print('Scores after 10-folf cross-validation : ')
-print(scores)
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+print(['Accuracy : ', np.mean(accuracy_scores)])
+print(['Recall : ', np.mean(recall_scores)])
+print(['Precision : ', np.mean(precision_scores)])
+print(['F1 : ', np.mean(f1_scores)])
