@@ -16,7 +16,7 @@ import numpy as np
 
 # caricamento dataset
 
-X, Y = load_dataset_time_based_b('datasets/scenario-b/TimeBasedFeatures-60s-Layer2.arff')
+X, Y = load_dataset_time_based_b('datasets/extracted/scenario-b/TimeBasedFeatures-30s-Layer2.arff')
 
 # kfold cross validation
 n_splits = 10
@@ -36,7 +36,7 @@ for train_index, test_index in kfold.split(X, Y):
     # splitting training/test set + oversampling delle classi in quantità minore
     X_train, Y_train = X[train_index], Y[train_index]
     # X_train, Y_train = undersample_dataset(X[train_index], Y[train_index])
-    # X_train, Y_train = oversample_dataset(X[train_index], Y[train_index])
+    X_train, Y_train = oversample_dataset(X[train_index], Y[train_index])
     X_test = X[test_index]
     Y_test = Y[test_index]
     n_cols = X_train.shape[1]
@@ -47,10 +47,12 @@ for train_index, test_index in kfold.split(X, Y):
         Y_test = to_categorical(Y_test)
 
     # creazione ed allenamento del modello
-    model = create_deep_model_3(n_cols, num_classes)
+    model = create_deep_model_3(n_cols, num_classes, 20, 25)
     early_stopping_monitor = EarlyStopping(patience=3)
     model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=30,
               callbacks=[early_stopping_monitor], verbose=1)
+
+    model.summary()
 
     # predizione dei dati di test
     Y_pred = model.predict(X_test)

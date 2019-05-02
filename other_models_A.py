@@ -8,7 +8,7 @@ import numpy as np
 
 
 # Inizializzazione del modello
-model_type = 'rnd_for'
+model_type = 'svm'
 model = None
 
 # Caricamento datasets
@@ -30,9 +30,9 @@ elif model_type == 'svm':
 
 # Esecuzione del modello con 10-fold cross-validation
 accuracy_scores = cross_val_score(model, X, Y, cv=10, scoring='accuracy')
-recall_scores = cross_val_score(model, X, Y, cv=10, scoring='recall')
-precision_scores = cross_val_score(model, X, Y, cv=10, scoring='precision')
-f1_scores = cross_val_score(model, X, Y, cv=10, scoring='f1')
+recall_scores = cross_val_score(model, X, Y, cv=10, scoring='recall_micro')
+precision_scores = cross_val_score(model, X, Y, cv=10, scoring='precision_micro')
+f1_scores = cross_val_score(model, X, Y, cv=10, scoring='f1_micro')
 
 # Risultati
 print('Scores after 10-fold cross-validation : ' + model_type)
