@@ -29,6 +29,7 @@ print('classification_type : ' + str(classification_type))
 
 model = None
 
+
 # Caricamento datasets
 datasets = [
     'AUDIO-STREAMING',
@@ -40,8 +41,9 @@ datasets = [
     'VIDEO-STREAMING',
     'VOIP'
 ]
-# X, Y = load_raw_nibble_dataset(datasets[0])
-X, Y = load_merged_nibble_datasets(datasets, samples=n_samples, classification=classification_type)
+ds_type = 'conv1d_pca'
+X, Y = load_merged_nibble_datasets(datasets, samples=n_samples, classification=classification_type, n_cols=27, type_col=np.float32, ds_type=ds_type)
+
 
 # classificatore naive di bayes
 if model_type == 'bayes':
@@ -61,8 +63,11 @@ scoring = ['accuracy', 'precision_micro', 'recall_micro', 'f1_micro']
 scores = cross_validate(model, X, Y, cv=10, scoring=scoring)
 
 # salvataggio dei risultati
-filename = model_type + '_' + str(n_samples) + '_' + classification_type + '.txt'
-with open('results/other_c/' + filename, mode='w') as file:
+if ds_type == 'conv1d_pca':
+    filename = model_type + '_' + str(n_samples) + '_' + classification_type + '.conv1d_pca.txt'
+if ds_type == 'raw_mixed':
+    filename = model_type + '_' + str(n_samples) + '_' + classification_type + '.txt'
+with open('results/other_C/' + filename, mode='w+') as file:
     file.write('Accuracy : ' + str(np.mean(scores['test_accuracy'])) + '\n')
     file.write('Precision : ' + str(np.mean(scores['test_precision_micro'])) + '\n')
     file.write('Recall : ' + str(np.mean(scores['test_recall_micro'])) + '\n')
