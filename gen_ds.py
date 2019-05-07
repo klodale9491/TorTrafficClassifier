@@ -11,7 +11,7 @@ protocollo.
 '''
 def generate_samples_datasets(datasets, replace_labels, n_samples=100000):
     #genero le cartelle necessario
-    base_dir = '../datasets/raw/mixed/'
+    base_dir = 'datasets/raw/mixed/'
     sample_fold_name = str(n_samples)+'_samples'
     os.mkdir(base_dir + sample_fold_name)
     os.mkdir(base_dir + sample_fold_name + '/tmp')
@@ -40,6 +40,7 @@ def generate_samples_datasets(datasets, replace_labels, n_samples=100000):
         df_multi.to_csv(base_dir + sample_fold_name + '/label/' + csv_file, header=None, index=False)
     os.system("rm -R " + base_dir + sample_fold_name + '/tmp/')
     print('all done!')
+
 
 
 '''
@@ -77,7 +78,7 @@ try:
     n_samples = int(args[args.index('-n') + 1])
 # nel cado harcoding dei parametri
 except ValueError:
-    n_samples = 0
+    n_samples = 2000
 print('Running script with params : ')
 print('number_of_samples  : ' + str(n_samples))
 
