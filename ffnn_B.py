@@ -15,8 +15,7 @@ import numpy as np
 
 
 # caricamento dataset
-
-X, Y = load_dataset_time_based_b('datasets/extracted/scenario-b/TimeBasedFeatures-30s-Layer2.arff')
+X, Y = load_dataset_time_based_b('datasets/time_based/scenario-b/TimeBasedFeatures-30s-Layer2.arff')
 
 # kfold cross validation
 n_splits = 10
@@ -52,7 +51,6 @@ for train_index, test_index in kfold.split(X, Y):
     model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=30,
               callbacks=[early_stopping_monitor], verbose=1)
 
-    model.summary()
 
     # predizione dei dati di test
     Y_pred = model.predict(X_test)
@@ -70,7 +68,6 @@ for train_index, test_index in kfold.split(X, Y):
     total_precision += precision_score(Y_test, Y_pred_vec, average='micro')
     total_recall += recall_score(Y_test, Y_pred_vec, average='micro')
     total_fscore += f1_score(Y_test, Y_pred_vec, average='micro')
-
 
 
 # risultati
