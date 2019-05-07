@@ -119,7 +119,7 @@ def create_raw_nibble_protocol_dataset(protocol='AUDIO-STREAMING', splits=10):
         try:
             curr_chunk_tor = tor_iterator.__next__()
             split_count += 1
-        except Exception as e:
+        except Exception:
             break
 
 
@@ -141,23 +141,27 @@ def load_raw_nibble_dataset(protocol='AUDIO-STREAMING'):
 
 
 # carica il merge di una lista di datasets
-def load_merged_nibble_datasets(protocols, samples=100000, classification='binary'):
+def load_merged_nibble_datasets(protocols, samples=100000, classification='binary', n_cols=108, type_col=np.uint8, ds_type='raw_mixed'):
     # preparazione della struttura dati minimale in termini di memoria per il dataset
     col_dtypes = {}
-    for i in range(0, 108):
-        col_dtypes[i] = np.uint8
-    col_dtypes[108] = str
+    for i in range(0, n_cols):
+        col_dtypes[i] = type_col
+    col_dtypes[n_cols] = str
     all_data = np.asarray([])
     all_classes = np.asarray([])
+    # caricamento dei dati
     for protocol in protocols:
         print('Loading ' + protocol + ' data ....')
-        df = pd.read_csv('datasets/raw/mixed/'+str(samples)+'_samples/'+classification+'/' + protocol + '.csv', sep=",", header=None, dtype=col_dtypes)
+        if ds_type == 'raw_mixed':
+            df = pd.read_csv('datasets/raw/mixed/'+str(samples)+'_samples/'+classification+'/' + protocol + '.csv', sep=",", header=None, dtype=col_dtypes)
+        if ds_type == 'conv1d_pca':
+            df = pd.read_csv('datasets/conv1d_pca/' + str(samples) + '_samples/' + classification + '/' + protocol + '.csv', sep=",", header=None, dtype=col_dtypes)
         print('Shuffling ' + protocol + ' data ....')
         # shuffling del dataset
         df = df.reindex(np.random.permutation(df.index))
         # codifica delle classi in valori numerici
         data = np.asarray(df[df.columns[0:-1]])
-        classes = np.asarray(df[108])
+        classes = np.asarray(df[n_cols])
         if all_data.size == 0 and all_classes.size == 0:
             all_data = data
             all_classes = classes
