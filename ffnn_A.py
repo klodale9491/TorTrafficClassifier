@@ -44,6 +44,10 @@ for i in range(len(num_layers)):
     num_classes = 2
     class_categorical = True
 
+    # creazione del modello
+    model = create_deep_model_3(n_cols, num_classes, num_layers[i], num_neurons[i])
+    early_stopping_monitor = EarlyStopping(patience=3)
+
     for train_index, test_index in kfold.split(X, Y):
         # splitting training/test set + oversampling delle classi in quantità minore
         # X_train, Y_train = undersample_dataset(X[train_index], Y[train_index])
@@ -58,9 +62,7 @@ for i in range(len(num_layers)):
             Y_train = to_categorical(Y_train)
             Y_test = to_categorical(Y_test)
 
-        # creazione ed allenamento del modello
-        model = create_deep_model_3(n_cols, num_classes, num_layers[i], num_neurons[i])
-        early_stopping_monitor = EarlyStopping(patience=3)
+        # allenamento del modello
         model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=30,
                   callbacks=[early_stopping_monitor], verbose=1)
 
