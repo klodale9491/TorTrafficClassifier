@@ -8,6 +8,7 @@ from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedShuffleSplit
 from util import load_merged_nibble_datasets
+from deep_models import create_deep_model_4
 from deep_models import create_deep_model_5
 import numpy as np
 import sys
@@ -22,7 +23,7 @@ try:
     classification_type = args[args.index('-c') + 1]
 # nel cado harcoding dei parametri
 except ValueError:
-    n_samples = 0
+    n_samples = 1000
     classification_type = 'label'
 print('Running script with params : ')
 print('number_of_samples  : ' + str(n_samples))
@@ -66,7 +67,8 @@ for i in range(len(num_layers)):
     total_fscore = 0.0
 
     # creazione del modello
-    model = create_deep_model_5(n_cols=x_train.shape[1], classes=16, layers=5)
+    model = create_deep_model_5(n_cols=x_train.shape[1], classes=16, layers=num_layers[i])
+    # model = create_deep_model_4(n_cols=x_train.shape[1], classes=16)
     early_stopping_monitor = EarlyStopping(patience=3)
 
     for train_index, test_index in kfold.split(x, y):
