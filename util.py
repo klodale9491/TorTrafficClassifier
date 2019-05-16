@@ -141,7 +141,7 @@ def load_raw_nibble_dataset(protocol='AUDIO-STREAMING'):
 
 
 # carica il merge di una lista di datasets
-def load_merged_nibble_datasets(protocols, samples=100000, classification='binary', n_cols=108, type_col=np.uint8, ds_type='raw_mixed'):
+def load_merged_nibble_datasets(protocols, samples=100000, classification='binary', n_cols=108, type_col=np.uint8, ds_type='RAW_MIXED'):
     # preparazione della struttura dati minimale in termini di memoria per il dataset
     col_dtypes = {}
     for i in range(0, n_cols):
@@ -152,14 +152,24 @@ def load_merged_nibble_datasets(protocols, samples=100000, classification='binar
     # caricamento dei dati
     for protocol in protocols:
         print('Loading ' + protocol + ' data ....')
-        if ds_type == 'raw_mixed':
-            df = pd.read_csv('datasets/raw/mixed/'+str(samples)+'_samples/'+classification+'/' + protocol + '.csv', sep=",", header=None, dtype=col_dtypes)
-        if ds_type == 'conv1d_pca':
-            df = pd.read_csv('datasets/conv1d_pca/' + str(samples) + '_samples/' + classification + '/' + protocol + '.csv', sep=",", header=None, dtype=col_dtypes)
+
+        # 1 - caricamento del dataset raw
+        if ds_type == 'RAW_MIXED':
+            df = pd.read_csv('datasets/raw/mixed/' + str(samples) + '_samples/'+classification+'/' + protocol + '.csv', sep=",", header=None, dtype=col_dtypes)
+
+        # 2 - caricamento del dataset raw con features estratte tramite rete convolutiva
+        if ds_type == 'RAW_MIXED_CONV1D':
+            df = pd.read_csv('datasets/raw/mixed_conv1d/' + str(samples) + '_samples/' + classification + '/' + protocol + '.csv', sep=",", header=None, dtype=col_dtypes)
+
+        # 3 - caricamento del dataset raw con feature estratte con rete convolutiva
+        # selezionando le principali mendiante PCA
+        if ds_type == 'RAW_MIXED_CONV1D_PCA':
+            print('Not implemented yet')
+            return
+
+        # shuffling del dataset e codifica delle classi in valori numerici
         print('Shuffling ' + protocol + ' data ....')
-        # shuffling del dataset
         df = df.reindex(np.random.permutation(df.index))
-        # codifica delle classi in valori numerici
         data = np.asarray(df[df.columns[0:-1]])
         classes = np.asarray(df[n_cols])
         if all_data.size == 0 and all_classes.size == 0:
