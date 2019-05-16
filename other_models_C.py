@@ -8,26 +8,28 @@ import numpy as np
 import sys
 
 '''
-Esempio di esecuzione : python3 other_models_C.py -m bayes -n 50000 -c label
+Esempio di esecuzione : python3 other_models_C.py -m bayes -n 50000 -c label -t RAW_MIXED_CONV1D
 '''
 args = sys.argv
-# nel caso di riga di comando, più facile per listare jobs
 try:
     model_type = args[args.index('-m') + 1]
     n_samples = int(args[args.index('-n') + 1])
     classification_type = args[args.index('-c') + 1]
+    ds_type = args[args.index('-t') + 1]
 # nel cado harcoding dei parametri
 except ValueError:
-    model_type = 'bayes'
-    n_samples = 50
+    model_type = 'log_reg'
+    n_samples = 1000
     classification_type = 'label'
+    ds_type = 'RAW_MIXED'
 
+
+# avvio dello script con i parametri passati da riga di comando
 print('Running script with params : ')
-print('model_type : ' + str(model_type))
+print('model_type : ' + model_type)
 print('number_of_samples  : ' + str(n_samples))
-print('classification_type : ' + str(classification_type))
-
-model = None
+print('classification_type : ' + classification_type)
+print('ds_type : ' + ds_type)
 
 
 # Caricamento datasets
@@ -41,8 +43,21 @@ datasets = [
     'VIDEO-STREAMING',
     'VOIP'
 ]
-ds_type = 'conv1d_pca'
-X, Y = load_merged_nibble_datasets(datasets, samples=n_samples, classification=classification_type, n_cols=27, type_col=np.float32, ds_type=ds_type)
+# ds_type = 'RAW_MIXED'
+# ds_type = 'RAW_MIXED_CONV1D'
+# ds_type = 'RAW_MIXED_CONV1D_PCA'
+
+# numero di colonne del dataset
+if ds_type == 'RAW_MIXED':
+    n_columns = 108 # features dell'esperimento originale
+elif ds_type == 'RAW_MIXED_CONV1D':
+    n_columns = 1728 # features estratte dal modello convolutivo
+elif ds_type == 'RAW_MIXED_CONV1D_PCA':
+    n_columns = 625 # numero features custom estratte con PCA
+
+
+# caricamento del dataset
+X, Y = load_merged_nibble_datasets(datasets, samples=n_samples, classification=classification_type, n_cols=n_columns, type_col=np.float32, ds_type=ds_type)
 
 
 # classificatore naive di bayes
@@ -58,15 +73,14 @@ elif model_type == 'rnd_for':
 elif model_type == 'svm':
     model = svm.SVC(kernel='rbf', C=1)
 
+
 # Esecuzione del modello con 10-fold cross-validation
 scoring = ['accuracy', 'precision_micro', 'recall_micro', 'f1_micro']
 scores = cross_validate(model, X, Y, cv=10, scoring=scoring)
 
+
 # salvataggio dei risultati
-if ds_type == 'conv1d_pca':
-    filename = model_type + '_' + str(n_samples) + '_' + classification_type + '.conv1d_pca.txt'
-if ds_type == 'raw_mixed':
-    filename = model_type + '_' + str(n_samples) + '_' + classification_type + '.txt'
+filename = model_type + '_' + str(n_samples) + '_' + classification_type + '.' + ds_type
 with open('results/other_C/' + filename, mode='w+') as file:
     file.write('Accuracy : ' + str(np.mean(scores['test_accuracy'])) + '\n')
     file.write('Precision : ' + str(np.mean(scores['test_precision_micro'])) + '\n')
