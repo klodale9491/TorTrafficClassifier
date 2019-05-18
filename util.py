@@ -184,6 +184,53 @@ def load_merged_nibble_datasets(protocols, samples=100000, classification='binar
     return all_data, all_classes
 
 
+'''
+Funzione per effettaure il caricamento di dataset di grosse dimensioni
+effettudo il mixing di questo al fine di ottenere un unico dataset
+come compososizione randomica di quelli elementari
+'''
+def load_merged_nibble_chunked_datasets(protocols, samples=100000, classification='label', n_cols=108, type_col=np.uint8, ds_type='RAW_MIXED', chunks=10):
+    # preparazione della struttura dati minimale in termini di memoria per il dataset
+    col_dtypes = {}
+    for i in range(0, n_cols):
+        col_dtypes[i] = type_col
+    col_dtypes[n_cols] = str
+    datasets = {}
+    # effettuiamo il caricamento di tutti i dataset, caricando solo i chunk in memoria
+    for protocol in protocols:
+        print('Loading ' + protocol + ' data ....')
+        # 1 - caricamento del dataset raw
+        if ds_type == 'RAW_MIXED':
+            path = 'datasets/raw/mixed/' + str(samples) + '_samples/' + classification + '/' + protocol + '.csv'
+        # 2 - caricamento del dataset raw con features estratte tramite rete convolutiva
+        if ds_type == 'RAW_MIXED_CONV1D':
+            path = 'datasets/raw/mixed_conv1d/' + str(samples) + '_samples/' + classification + '/' + protocol + '.csv'
+        datasets[protocol] = pd.read_csv(path, sep=",", header=None, dtype=col_dtypes, chunksize=samples / chunks)
+    return datasets
+
+
+'''
+Estrazione e merge dei chunk correnti di ogni protocollo
+shuffling di questi e return di dati e classi
+'''
+def split_and_merge_chunk_data_class(chunk_ptrs, protocols, n_cols=1728):
+    all_chunk = np.asarray([])
+    for p in protocols:
+        try:
+            df = chunk_ptrs[p].get_chunk()
+        except Exception:
+            return None, None # ho finito non ci sono più chunks
+        if all_chunk.size == 0:
+            all_chunk = df
+        else:
+            all_chunk = np.concatenate((all_chunk, df))
+    np.random.shuffle(all_chunk)
+    all_chunk_data = np.asarray(all_chunk[:, range(0, n_cols)])
+    all_chunk_classes = np.asarray(all_chunk[:, n_cols])
+    return all_chunk_data, all_chunk_classes
+
+
+
 # funzione che effettua UNDERSAMPLIG su entrambi i dataset
 def undersample_dataset(x, y):
     rus = RandomUnderSampler(random_state=0, replacement=True)
