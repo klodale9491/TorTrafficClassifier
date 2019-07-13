@@ -11,8 +11,8 @@ import sys
 
 
 '''
-Esempio di esecuzione : python3 other_models_C.py -m bayes -n 50000 -c label -d 20
-'''
+Esempio di esecuzione : python3 other_models_C_OLD.py -m bayes -n 50000 -c label -d 20
+
 args = sys.argv
 try:
     model_type = args[args.index('-m') + 1]
@@ -27,7 +27,11 @@ except ValueError:
     classification_type = 'label'
     splits = 10
     dims = 20
-
+'''
+model_type = 'svm'
+n_samples = 1000
+classification_type = 'label'
+dims = 20
 
 print('Executing PCA into dataset for ' + str(dims) + ' dimensions ...')
 # esecuzione di pca sul dataset

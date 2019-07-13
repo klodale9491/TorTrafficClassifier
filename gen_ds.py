@@ -11,12 +11,13 @@ protocollo.
 '''
 def generate_samples_datasets(datasets, replace_labels, n_samples=100000):
     #genero le cartelle necessario
-    base_dir = 'datasets/raw/mixed/'
-    sample_fold_name = str(n_samples)+'_samples'
-    os.mkdir(base_dir + sample_fold_name)
-    os.mkdir(base_dir + sample_fold_name + '/tmp')
-    os.mkdir(base_dir + sample_fold_name + '/binary')
-    os.mkdir(base_dir + sample_fold_name + '/label')
+    sample_dir = 'datasets/csv/mix/samples/original'
+    csv_dir = 'datasets/csv/mix'
+    sample_fold_name = str(n_samples)
+    os.mkdir(sample_dir + '/' + sample_fold_name)
+    os.mkdir(sample_dir + '/' + sample_fold_name + '/tmp')
+    os.mkdir(sample_dir + '/' + sample_fold_name + '/binary')
+    os.mkdir(sample_dir + '/' + sample_fold_name + '/multi')
     # impostazione della memoria da allocare per i campi
     col_dtypes = {}
     for i in range(0, 108):
@@ -27,19 +28,20 @@ def generate_samples_datasets(datasets, replace_labels, n_samples=100000):
         ds = datasets[i]
         csv_file = ds + '.csv'
         print('shuffling ' + ds + '...')
-        os.system("shuf -n " + str(n_samples) + ' ' + base_dir + csv_file + ' > ' + base_dir + sample_fold_name + '/tmp/' + csv_file)
+        os.system("shuf -n " + str(n_samples) + ' ' + csv_dir + '/' + csv_file + ' > ' + sample_dir + '/' + sample_fold_name + '/tmp/' + csv_file)
         # rimpiazzo ora l'etichetta tor/non_tor con una numerica
         print('replacing labels ' + ds + '...')
-        df_bin = pd.read_csv(base_dir + sample_fold_name + '/tmp/' + csv_file, sep=",", header=None, dtype=col_dtypes)
-        df_multi = pd.read_csv(base_dir + sample_fold_name + '/tmp/' + csv_file, sep=",", header=None, dtype=col_dtypes)
+        df_bin = pd.read_csv(sample_dir + '/' + sample_fold_name + '/tmp/' + csv_file, sep=",", header=None, dtype=col_dtypes)
+        df_multi = pd.read_csv(sample_dir + '/' + sample_fold_name + '/tmp/' + csv_file, sep=",", header=None, dtype=col_dtypes)
         df_bin = df_bin.replace('nonTor', 0)
         df_bin = df_bin.replace('tor', 1)
         df_multi = df_multi.replace('nonTor', replace_labels[i][0])
         df_multi = df_multi.replace('tor', replace_labels[i][1])
-        df_bin.to_csv(base_dir + sample_fold_name + '/binary/' + csv_file, header=None, index=False)
-        df_multi.to_csv(base_dir + sample_fold_name + '/label/' + csv_file, header=None, index=False)
-    os.system("rm -R " + base_dir + sample_fold_name + '/tmp/')
+        df_bin.to_csv(sample_dir + '/' + sample_fold_name + '/binary/' + csv_file, header=None, index=False)
+        df_multi.to_csv(sample_dir + '/' + sample_fold_name + '/multi/' + csv_file, header=None, index=False)
+    os.system("rm -R " + sample_dir + '/' + sample_fold_name + '/tmp/')
     print('all done!')
+
 
 
 
@@ -48,14 +50,14 @@ Pari    : 0,2,4,6,8,.... -> NON TOR
 Dispari : 1,3,5,7,9,.... -> TOR
 '''
 datasets = [
-    'AUDIO-STREAMING',
-    'BROWSING',
-    'CHAT',
-    'EMAIL',
-    'FILE-TRANSFER',
-    'P2P',
-    'VIDEO-STREAMING',
-    'VOIP'
+    'audio',
+    'browsing',
+    'chat',
+    'email',
+    'file',
+    'p2p',
+    'video',
+    'voip'
 ]
 replace_labels = [
     [0, 1],

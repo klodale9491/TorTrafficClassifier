@@ -9,7 +9,7 @@ import numpy as np
 import sys
 
 '''
-Esempio di esecuzione : python3 other_models_C.py -m bayes -n 50000 -c label -t RAW_MIXED_CONV1D
+Esempio di esecuzione : python3 other_models_C_OLD.py -m bayes -n 50000 -c label -t RAW_MIXED_CONV1D
 '''
 args = sys.argv
 try:
@@ -48,6 +48,7 @@ datasets = [
 # ds_type = 'RAW_MIXED_CONV1D'
 # ds_type = 'RAW_MIXED_CONV1D_PCA'
 
+
 # numero di colonne del dataset
 if ds_type == 'RAW_MIXED':
     n_columns = 108 # features dell'esperimento originale
@@ -64,7 +65,6 @@ al chunk corrente
 chunks_ptr = {}
 chunks_ptr = load_merged_nibble_chunked_datasets(datasets, samples=n_samples, classification=classification_type, n_cols=n_columns,
                                                  type_col=np.float32, ds_type=ds_type, chunks=10)
-
 
 # classificatore naive di bayes
 if model_type == 'bayes':
@@ -90,6 +90,7 @@ test_recall_micro = []
 test_f1_micro = []
 scoring = ['accuracy', 'precision_micro', 'recall_micro', 'f1_micro']
 
+
 # processo tutti i chunk del dataset
 X, Y = split_and_merge_chunk_data_class(chunks_ptr, protocols=datasets, n_cols=1728)
 while X is not None and Y is not None:
@@ -99,7 +100,6 @@ while X is not None and Y is not None:
     test_precision_micro.append(np.mean(scores['test_precision_micro']))
     test_recall_micro.append(np.mean(scores['test_recall_micro']))
     test_f1_micro.append(np.mean(scores['test_f1_micro']))
-    # print(scores)
     X, Y = split_and_merge_chunk_data_class(chunks_ptr, protocols=datasets, n_cols=1728)
 
 

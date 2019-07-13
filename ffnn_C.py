@@ -5,13 +5,13 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from keras.utils import to_categorical
-from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedShuffleSplit
 from util import load_merged_nibble_datasets
-from deep_models import create_deep_model_4
 from deep_models import create_deep_model_5
 import numpy as np
 import sys
+
+
 
 '''
 Esempio di esecuzione : python3 ffnn_C.py -n 1000
@@ -29,6 +29,7 @@ print('Running script with params : ')
 print('number_of_samples  : ' + str(n_samples))
 print('classification_type  : ' + str(classification_type))
 
+
 # Caricamento datasets
 datasets = [
     'AUDIO-STREAMING',
@@ -41,23 +42,22 @@ datasets = [
     'VOIP'
 ]
 x, y = load_merged_nibble_datasets(datasets, samples=n_samples, classification='label')
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20)
-y_train = to_categorical(y_train)
-y_test = to_categorical(y_test)
-x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], 1)
-x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
+
 
 # kfold cross validation
 n_splits = 10
 kfold = StratifiedShuffleSplit(n_splits=n_splits)
 
+
 # numero di neuroni e layer da utilizzare per testare i modelli
 num_layers = [5, 10, 20, 25]
 num_neurons = [125, 62, 31, 25]
 
+
 # numero di classi e tipologia di queste
 num_classes = 16
 class_categorical = True
+
 
 for i in range(len(num_layers)):
     # parametri di valutazione delle prestazioni dell'algoritmo
@@ -68,7 +68,6 @@ for i in range(len(num_layers)):
 
     # creazione del modello
     model = create_deep_model_5(n_cols=x_train.shape[1], classes=16, layers=num_layers[i])
-    # model = create_deep_model_4(n_cols=x_train.shape[1], classes=16)
     early_stopping_monitor = EarlyStopping(patience=3)
 
     for train_index, test_index in kfold.split(x, y):
@@ -84,8 +83,7 @@ for i in range(len(num_layers)):
         x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
 
         # allenamento del modello
-        model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=50,
-                  callbacks=[early_stopping_monitor], verbose=1)
+        model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=50, callbacks=[early_stopping_monitor], verbose=1)
         accuracy = model.evaluate(x_test, y_test, verbose=0)
 
         # predizione dei dati di test

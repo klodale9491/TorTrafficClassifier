@@ -49,8 +49,6 @@ for i in range(len(num_layers)):
     early_stopping_monitor = EarlyStopping(patience=3)
 
     for train_index, test_index in kfold.split(X, Y):
-        # splitting training/test set + oversampling delle classi in quantità minore
-        # X_train, Y_train = undersample_dataset(X[train_index], Y[train_index])
         X_train, Y_train = oversample_dataset(X[train_index], Y[train_index])
         X_train, Y_train = X[train_index], Y[train_index]
         X_test = X[test_index]
@@ -63,8 +61,7 @@ for i in range(len(num_layers)):
             Y_test = to_categorical(Y_test)
 
         # allenamento del modello
-        model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=30,
-                  callbacks=[early_stopping_monitor], verbose=1)
+        model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=30, callbacks=[early_stopping_monitor], verbose=1)
 
         # predizione dei dati di test
         Y_pred = model.predict(X_test)
