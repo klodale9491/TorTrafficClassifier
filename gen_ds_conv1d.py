@@ -2,7 +2,6 @@
    Genera dei dataset ottenuti tramite estrazione delle caratteristiche
    da parte di un modello convolutivo, da un dataset campione già creato
    Esempio di esecuzione :
-
    python3 gen_ds_conv1d.py -n 10000
 '''
 from keras.models import Model
@@ -24,8 +23,6 @@ except ValueError:
 
 print('Running script with these params : ')
 print('n_samples_gen : ' + str(n_samples_gen))
-
-
 print('loading datasets ...')
 # Caricamento datasets
 datasets = [
@@ -47,7 +44,6 @@ model.load_weights('model_bkp/model_1000000.h5')
 layer_name = 'flatten_1' # layer di estrazione della caratteristiche della rete convolutiva
 intermediate_layer_model = Model(inputs=model.input, outputs=model.get_layer(layer_name).output)
 
-
 # cartella 1 - cartella col numero di esempi
 if os.path.isdir('datasets/csv/mix/samples/convolution/'+str(n_samples_gen)) is False:
     os.mkdir('datasets/csv/mix/samples/convolution/'+str(n_samples_gen))
@@ -60,10 +56,8 @@ if os.path.isdir('datasets/csv/mix/samples/convolution/'+str(n_samples_gen)+'/bi
 if os.path.isdir('datasets/csv/mix/samples/convolution/'+str(n_samples_gen)+'/multi') is False:
     os.mkdir('datasets/csv/mix/samples/convolution/'+str(n_samples_gen)+'/multi')
 
-
 base_read_path  = 'datasets/csv/mix/samples/original/' + str(n_samples_gen) + '/'
 base_write_path  = 'datasets/csv/mix/samples/convolution/' + str(n_samples_gen) + '/'
-
 
 # caricamento dei datasets e tipizzazione della struttura dati più opportuna
 col_dtypes = {}
@@ -80,11 +74,9 @@ for ds in datasets:
     data_label = data_label.reshape(data_label.shape[0], data_label.shape[1], 1)
     classes_bin = np.asarray(df_bin[108])
     classes_label = np.asarray(df_label[108])
-
     # estrazione delle caratteristiche
     features_bin_trx = intermediate_layer_model.predict(data_bin)
     features_label_trx = intermediate_layer_model.predict(data_label)
-
     # salvataggio delle features estratte
     print('writing principal features of ' + ds + '....')
     print(base_write_path + 'binary/' + ds + '.csv')
