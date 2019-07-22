@@ -81,5 +81,5 @@ elif model_type == 'other':
     for subdir in os.listdir(filedir_conv):
         save_dir(os.path.join(filedir_conv, subdir), os.path.join(savedir_conv, subdir))
          
-    for file_subdir in os.listdir(filedir_org):
+    for subdir in os.listdir(filedir_org):
         save_dir(os.path.join(filedir_org, subdir), os.path.join(savedir_org, subdir))
