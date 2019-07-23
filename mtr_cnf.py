@@ -77,7 +77,7 @@ for smp in samples:
     for layer in layers:
         result_filename = 'table-layer-' + str(layer) + '.csv'
         confmat = load_confmat_deep(smp, layer)
-        with open(os.path.join(store_base_root, result_filename), 'wb') as result_file:
+        with open(os.path.join(store_base_root, result_filename), 'w') as result_file:
             csv_writer = csv.DictWriter(result_file, fieldnames=csv_headers, dialect='myDialect')
             csv_writer.writeheader()
             rows_data = []
@@ -116,7 +116,7 @@ for scn in scenarios:
                     row = {'protocol': prot}
                     for bool in istor:
                         classid = get_class_col(prot, bool)
-                        confmat = load_confmat_baseline(smp, mod, 'original')
+                        confmat = load_confmat_baseline(smp, mod, scn)
                         precision = get_class_precision(classid, confmat)
                         recall = get_class_recall(classid, confmat)
                         if bool is True:
