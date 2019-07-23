@@ -1,0 +1,9 @@
+protocol;tor_precision;tor_recall;not_tor_precision;not_tor_recall
+audio;0.1787;0.1786;nan;0.0
+browsing;0.7587;0.6256;nan;0.0
+chat;0.2249;0.6548;0.1903;0.8326
+email;0.5995;0.1804;0.8053;0.2413
+file;nan;0.0;0.7802;0.0814
+p2p;0.6909;0.0077;0.4481;0.0239
+video;0.207;0.1102;0.2786;0.9648
+voip;0.2771;0.5735;0.7462;0.5194
